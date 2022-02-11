@@ -40,6 +40,15 @@ const GIT_ORG = gql`
     }
 `;
 
+const GIT_USER = gql`
+    query {
+        user(login: "tamer1an") {
+            name
+            url
+        }
+    }
+`;
+
 function Organization() {
     const { loading, error, data } = useQuery(GIT_ORG);
     console.log(data)
@@ -55,10 +64,25 @@ function Organization() {
     );
 }
 
+function User() {
+    const { loading, error, data } = useQuery(GIT_USER);
+    console.log(data)
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+
+    return (
+        <div>
+            <p>
+                {data.user.name}
+            </p>
+        </div>
+    );
+}
+
 ReactDOM.render(
   <React.StrictMode>
       <ApolloProvider client={githubClient}>
-        <Organization />
+        <User />
       </ApolloProvider>,
   </React.StrictMode>,
   document.getElementById('root')
