@@ -31,15 +31,6 @@ const githubClient = new ApolloClient({
     link: authLink.concat(httpLink),
 });
 
-const GIT_ORG = gql`
-    query {
-        organization(login: "github-tools") {
-            name
-            url
-        }
-    }
-`;
-
 const GIT_USER = gql`
     query {
         user(login: "tamer1an") {
@@ -48,21 +39,6 @@ const GIT_USER = gql`
         }
     }
 `;
-
-function Organization() {
-    const { loading, error, data } = useQuery(GIT_ORG);
-    console.log(data)
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-
-    return (
-        <div>
-            <p>
-                {data.organization.name}
-            </p>
-        </div>
-    );
-}
 
 function User() {
     const { loading, error, data } = useQuery(GIT_USER);
@@ -79,11 +55,90 @@ function User() {
     );
 }
 
+const GIT_USER_WITHREPOS = gql`
+    query {
+        user(login: "gaearon") {
+            name
+            url
+            bio
+            avatarUrl
+            anyPinnableItems
+            bioHTML
+            company
+            companyHTML
+            email
+            followers(first: 50) {
+                nodes {
+                    name
+                    url
+                }
+            }
+            following(first: 50) {
+                nodes {
+                    name
+                    url
+                }
+            }
+            starredRepositories(first: 50) {
+                nodes {
+                    name
+                    url
+                }
+            }
+            twitterUsername
+            repositories(first: 50, isFork: false) {
+                nodes {
+                    name
+                    url
+                }
+            }
+        }
+    }`
+
+function UserRepos() {
+    const { loading, error, data } = useQuery(GIT_USER_WITHREPOS);
+    console.log(data)
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+
+    return (
+        <div>
+            <p>
+                {data.user.name}
+            </p>
+        </div>
+    );
+}
+
 ReactDOM.render(
   <React.StrictMode>
       <ApolloProvider client={githubClient}>
-        <User />
+        <UserRepos />
       </ApolloProvider>,
   </React.StrictMode>,
   document.getElementById('root')
 );
+
+function Organization() {
+    const { loading, error, data } = useQuery(GIT_ORG);
+    console.log(data)
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+
+    return (
+        <div>
+            <p>
+                {data.organization.name}
+            </p>
+        </div>
+    );
+}
+
+const GIT_ORG = gql`
+    query {
+        organization(login: "github-tools") {
+            name
+            url
+        }
+    }
+`;
