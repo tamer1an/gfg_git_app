@@ -8,7 +8,7 @@ import {
     useQuery,
     gql,
     createHttpLink,
-} from "@apollo/client";
+} from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 const httpLink = createHttpLink({
     uri: 'https://api.github.com/graphql',
@@ -30,56 +30,7 @@ const githubClient = new ApolloClient({
     cache: new InMemoryCache(),
     link: authLink.concat(httpLink),
 });
-
-const GIT_ORG = gql`
-    query {
-        organization(login: "github-tools") {
-            name
-            url
-        }
-    }
-`;
-
 const GIT_USER = gql`
-    query {
-        user(login: "tamer1an") {
-            name
-            url
-        }
-    }
-`;
-
-function Organization() {
-    const { loading, error, data } = useQuery(GIT_ORG);
-    console.log(data)
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-
-    return (
-        <div>
-            <p>
-                {data.organization.name}
-            </p>
-        </div>
-    );
-}
-
-function User() {
-    const { loading, error, data } = useQuery(GIT_USER);
-    console.log(data)
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-
-    return (
-        <div>
-            <p>
-                {data.user.name}
-            </p>
-        </div>
-    );
-}
-
-const GIT_USER_FULLINFO = gql`
     query {
         user(login: "gaearon") {
             name
@@ -117,13 +68,13 @@ const GIT_USER_FULLINFO = gql`
                 }
             }
         }
-    }`
+    }`;
 
-function UserRepos() {
-    const { loading, error, data } = useQuery(GIT_USER_FULLINFO);
-    console.log(data)
+function User() {
+    const { loading, error, data } = useQuery(GIT_USER);
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
+    const repos = <UserRepos repos={data.user.repositories.nodes}/>
 
     return (
         <>
@@ -140,6 +91,15 @@ function UserRepos() {
             </div>
             <p>{data.user.email}</p>
             <p>{data.user.twitterUsername}</p>
+            <span> {repos} </span>
+        </>
+    );
+}
+
+function UserRepos(data: {repos: Array<any>}) {
+    return (
+        <>
+            <span> repositories {data.repos.length}</span>
         </>
     );
 }
@@ -147,8 +107,8 @@ function UserRepos() {
 ReactDOM.render(
   <React.StrictMode>
       <ApolloProvider client={githubClient}>
-        <UserRepos />
-      </ApolloProvider>,
+        <User />
+      </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
