@@ -57,4 +57,4 @@ export const GIT_USER_FULLINFO = gql`
                 }
             }
         }
-    }`
+    }`;
