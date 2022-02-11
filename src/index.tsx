@@ -31,6 +31,15 @@ const githubClient = new ApolloClient({
     link: authLink.concat(httpLink),
 });
 
+const GIT_ORG = gql`
+    query {
+        organization(login: "github-tools") {
+            name
+            url
+        }
+    }
+`;
+
 const GIT_USER = gql`
     query {
         user(login: "tamer1an") {
@@ -39,6 +48,21 @@ const GIT_USER = gql`
         }
     }
 `;
+
+function Organization() {
+    const { loading, error, data } = useQuery(GIT_ORG);
+    console.log(data)
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+
+    return (
+        <div>
+            <p>
+                {data.organization.name}
+            </p>
+        </div>
+    );
+}
 
 function User() {
     const { loading, error, data } = useQuery(GIT_USER);
@@ -55,7 +79,7 @@ function User() {
     );
 }
 
-const GIT_USER_WITHREPOS = gql`
+const GIT_USER_FULLINFO = gql`
     query {
         user(login: "gaearon") {
             name
@@ -96,17 +120,27 @@ const GIT_USER_WITHREPOS = gql`
     }`
 
 function UserRepos() {
-    const { loading, error, data } = useQuery(GIT_USER_WITHREPOS);
+    const { loading, error, data } = useQuery(GIT_USER_FULLINFO);
     console.log(data)
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
 
     return (
-        <div>
-            <p>
-                {data.user.name}
-            </p>
-        </div>
+        <>
+            <picture>
+                <img src={data.user.avatarUrl} alt="avatar" style={{ borderRadius: 230 }}/>
+            </picture>
+            <p> {data.user.name} </p>
+            <p>{data.user.url.split('https://github.com/')[1]}</p>
+            <input type="button" value="Follow"/>
+            <div>
+                <span> followers {data.user.followers.nodes.length}</span>
+                <span> following {data.user.following.nodes.length}</span>
+                <span> starred {data.user.starredRepositories.nodes.length}</span>
+            </div>
+            <p>{data.user.email}</p>
+            <p>{data.user.twitterUsername}</p>
+        </>
     );
 }
 
@@ -118,27 +152,3 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
-
-function Organization() {
-    const { loading, error, data } = useQuery(GIT_ORG);
-    console.log(data)
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
-
-    return (
-        <div>
-            <p>
-                {data.organization.name}
-            </p>
-        </div>
-    );
-}
-
-const GIT_ORG = gql`
-    query {
-        organization(login: "github-tools") {
-            name
-            url
-        }
-    }
-`;
