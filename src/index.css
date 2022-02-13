@@ -20,6 +20,7 @@ code {
 
 .App__name {
   font-size: 26px;
+  font-weight: 600;
 }
 
 .App__username {
@@ -32,6 +33,12 @@ code {
   background-color: #444c56;
   border-color: #768390;
   transition-duration: .1s;
+}
+
+.App__repos {
+  height: 200px;
+  overflow-x: hidden;
+  padding-left: 0;
 }
 
 .btn {
