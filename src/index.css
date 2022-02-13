@@ -11,3 +11,42 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.App {
+  margin: 0 auto;
+  width: 273px;
+  padding-top: 44px;
+}
+
+.App__name {
+  font-size: 26px;
+}
+
+.App__username {
+  font-size: 20px;
+  font-weight: 300;
+  color: #768390;
+}
+
+.btn:hover, .btn.hover, [open]>.btn {
+  background-color: #444c56;
+  border-color: #768390;
+  transition-duration: .1s;
+}
+
+.btn {
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+  padding: 5px 16px;
+  width: 100%;
+}
+
+.lnk {
+  font-size: 14px;
+}
+
+img {
+  width: 250px;
+}
